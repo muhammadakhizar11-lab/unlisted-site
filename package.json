@@ -1,0 +1,7 @@
+{
+  "name": "unlisted-site",
+  "private": true,
+  "scripts": {
+    "build": "node build.mjs --strict"
+  }
+}

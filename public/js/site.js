@@ -1,3 +1,15 @@
+// Contact email: joined from two data attributes so scrapers reading the source do not find it whole.
+// Without JS a <noscript> fallback shows it as plain text.
+(function () {
+  document.querySelectorAll(".mail").forEach(function (el) {
+    var addr = el.getAttribute("data-u") + "@" + el.getAttribute("data-d");
+    var a = document.createElement("a");
+    a.href = "mailto:" + addr;
+    a.textContent = addr;
+    el.replaceWith(a);
+  });
+})();
+
 // Waitlist form: posts to /api/waitlist (see src/worker.js). Works without the motion layer.
 (function () {
   var form = document.getElementById("join-form");
@@ -18,7 +30,9 @@
 // Content is visible if GSAP fails to load, and nothing moves for prefers-reduced-motion.
 (function () {
   var gsap = window.gsap, ScrollTrigger = window.ScrollTrigger;
-  if (!gsap || !ScrollTrigger) return;
+  // Legal text blocks join the plain entrance below.
+  document.querySelectorAll(".legal-section > *, .legal-side li").forEach(function (el) { el.setAttribute("data-reveal", ""); });
+  if (!gsap || !ScrollTrigger) { plainReveal(); return; }
   gsap.registerPlugin(ScrollTrigger);
   document.documentElement.classList.add("gsap");
 
@@ -56,3 +70,19 @@
     });
   });
 })();
+
+// Without GSAP (the legal pages, or if the CDN fails): a CSS entrance driven by IntersectionObserver.
+// The .io class that hides the parts is only added here, so content shows if this never runs.
+function plainReveal() {
+  if (!("IntersectionObserver" in window) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var els = document.querySelectorAll("[data-reveal]");
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } });
+  }, { rootMargin: "0px 0px -8% 0px", threshold: 0.01 });
+  els.forEach(function (e) {
+    var i = e.parentElement ? Array.prototype.indexOf.call(e.parentElement.children, e) : 0;
+    e.style.setProperty("--d", Math.min(i, 5) * 70 + "ms");
+    io.observe(e);
+  });
+  document.documentElement.classList.add("io");
+}

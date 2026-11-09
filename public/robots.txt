@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://unlisted-site.unlisted-joblist.workers.dev/sitemap.xml

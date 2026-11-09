@@ -1,8 +1,71 @@
-// Builds index.html from the data below. Run: node build.mjs
-import { writeFileSync } from "node:fs";
+// Builds the site into public/: the home page, /terms, /privacy, /cookies, /sources, sitemap.xml and robots.txt.
+// Run: node build.mjs (warns about unfilled placeholders)
+//      npm run build  (for deploy: fails if any {{PLACEHOLDER}} is left, unless you add -- --allow-placeholders)
+import { writeFileSync, mkdirSync } from "node:fs";
+
+// ---- Config: fill these before taking money ---------------------------------------------------------
+// null = not filled yet. The page then shows {{NAME}} and the deploy build fails.
+const LEGAL = {
+  OPERATOR_NAME: null,          // the sole trader's full name
+  BUSINESS_ADDRESS: null,       // a virtual office address keeps a home address off the site
+  EMAIL_PROVIDER: null,         // the service that sends the weekly sample
+  VAT_SENTENCE: "No VAT is charged.", // "The price includes VAT." once VAT-registered
+  ICO_SENTENCE: "",             // "Our ICO registration number is X." once registered, or empty if no fee applies
+};
+const SITE_URL = "https://unlisted-site.unlisted-joblist.workers.dev"; // swap for the real domain later
+const STRIPE_LIVE = false;      // true once Stripe checkout is live: shows the Stripe processor line and the checkout cookie text
+const LEGAL_NOINDEX = false;    // true adds <meta name="robots" content="noindex"> to the legal pages and drops them from the sitemap
+const LEGAL_UPDATED = "9 November 2026";
+const EMAIL = { user: "unlisted.joblist", domain: "gmail.com" };
+// -----------------------------------------------------------------------------------------------------
 
 const BRAND = "Unlisted";
 const PRICE = "£9.99";
+
+// The contact email, joined from two parts by js/site.js so it is not in the page source as one string.
+const mail = () => `<span class="mail" data-u="${EMAIL.user}" data-d="${EMAIL.domain}"></span><noscript>${EMAIL.user} [at] ${EMAIL.domain}</noscript>`;
+
+function pageHead({ title, description, path, noindex = false }) {
+  return `<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${title}</title>
+<meta name="description" content="${description}">
+<link rel="canonical" href="${SITE_URL}${path}">${noindex ? `\n<meta name="robots" content="noindex">` : ""}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/site.css">
+<script>document.documentElement.classList.add("js")</script>
+</head>`;
+}
+
+function topBar(home) {
+  const h = home ? "" : "/";
+  return `<header class="top">
+  <a class="wordmark" href="${home ? "#top" : "/"}">${BRAND}</a>
+  <nav class="top-links" aria-label="Main">
+    <a href="${h}#lists">Lists</a>
+    <a href="${h}#pricing">Pricing</a>
+    <a href="${h}#faq">Questions</a>
+  </nav>
+  <a class="top-action" href="${h}#join">Join the waitlist</a>
+</header>`;
+}
+
+function footer({ home = false, sources = false } = {}) {
+  const h = home ? "" : "/";
+  return `<footer class="foot">
+  <div class="foot-cols">
+    <div><p class="f1">${BRAND}</p><p>Curated lists of UK firms for job seekers.</p></div>
+    <div><p class="f1">Product</p><p><a href="${h}#lists">Lists</a></p><p><a href="${h}#pricing">Pricing</a></p><p><a href="${h}#faq">Questions</a></p></div>
+    <div><p class="f1">Legal</p><p><a href="/terms/">Terms</a></p><p><a href="/privacy/">Privacy</a></p><p><a href="/cookies/">Cookies</a></p><p><a href="/sources/">Sources</a></p></div>
+    <div><p class="f1">Contact</p><p>${mail()}</p><p>United Kingdom</p></div>
+  </div>
+  <p class="foot-word" aria-hidden="true">${BRAND.toUpperCase()}</p>
+  <p class="foot-legal">© 2026 ${BRAND}.${sources ? " Not affiliated with or endorsed by Companies House, the SRA, Ofgem or the FCA." : ""}</p>
+</footer>`;
+}
 
 // EXAMPLE rows only: fictional firms that show the format. Replace with real list data.
 const lists = [
@@ -70,28 +133,10 @@ const faqRows = faqs.map(([q, a]) => `
 
 const html = `<!doctype html>
 <html lang="en-GB">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${BRAND}: curated lists of UK firms to contact for jobs</title>
-<meta name="description" content="Eleven curated lists of UK firms in finance, consulting, tech, energy and law, each with a contact or careers page. ${PRICE} a month.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/site.css">
-<script>document.documentElement.classList.add("js")</script>
-</head>
+${pageHead({ title: `${BRAND}: curated lists of UK firms to contact for jobs`, description: `Eleven curated lists of UK firms in finance, consulting, tech, energy and law, each with a contact or careers page. ${PRICE} a month.`, path: "/" })}
 <body>
 
-<header class="top">
-  <a class="wordmark" href="#top">${BRAND}</a>
-  <nav class="top-links" aria-label="Main">
-    <a href="#lists">Lists</a>
-    <a href="#pricing">Pricing</a>
-    <a href="#faq">Questions</a>
-  </nav>
-  <a class="top-action" href="#join">Join the waitlist</a>
-</header>
+${topBar(true)}
 
 <main id="top">
 
@@ -192,9 +237,9 @@ const html = `<!doctype html>
       <div class="join-row" data-reveal>
         <label class="sr-only" for="email">Email address</label>
         <input id="email" name="email" type="email" autocomplete="email" placeholder="you@email.com" required>
-        <button type="submit" class="btn on-accent">Send the sample</button>
+        <button type="submit" class="btn on-accent" aria-describedby="join-consent">Send the sample</button>
       </div>
-      <p class="join-note">We only use your email for the sample and launch news. Unsubscribe any time. <a href="/privacy">Privacy policy</a>.</p>
+      <p class="join-consent" id="join-consent">We will email you the weekly free sample and launch news. Unsubscribe any time. See our <a href="/privacy/">Privacy policy</a>.</p>
       <p class="join-status" id="join-status" role="status" aria-live="polite"></p>
     </form>
     <div class="call sample" data-ui data-reveal>
@@ -214,22 +259,195 @@ const html = `<!doctype html>
 
 </main>
 
-<footer class="foot">
-  <div class="foot-cols">
-    <div><p class="f1">${BRAND}</p><p>Curated lists of UK firms for job seekers.</p></div>
-    <div><p class="f1">Product</p><p><a href="#lists">Lists</a></p><p><a href="#pricing">Pricing</a></p><p><a href="#faq">Questions</a></p></div>
-    <div><p class="f1">Legal</p><p><a href="/terms">Terms</a></p><p><a href="/privacy">Privacy</a></p><p><a href="/cookies">Cookies</a></p><p><a href="/sources">Data sources</a></p></div>
-    <div><p class="f1">Contact</p><p><a href="mailto:hello@example.com">hello@example.com</a></p><p>United Kingdom</p></div>
-  </div>
-  <p class="foot-word" aria-hidden="true">${BRAND.toUpperCase()}</p>
-  <p class="foot-legal">© 2026 ${BRAND}. Not affiliated with or endorsed by Companies House, the FCA or the SRA.</p>
-</footer>
+${footer({ home: true })}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" integrity="sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN4t9Euv9Vc" crossorigin="anonymous" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" integrity="sha384-P8VzCVnT9NBUkMrpcIZrJbA7EBjJvh/fJS6PmP+4nLIM284DtsImIv8D0fFjIkeh" crossorigin="anonymous" defer></script>
-<script src="js/site.js" defer></script>
+<script src="/js/site.js" defer></script>
 </body>
 </html>
 `;
-writeFileSync(new URL("./public/index.html", import.meta.url), html);
-console.log("public/index.html written,", html.length, "bytes");
+// ---- Legal pages: wording copied exactly from legal-content.md. Edit there first, then here. ----------
+// Each section is [heading, html]. The contact email is written in full here and swapped for the
+// obfuscated mail() link when the page is rendered. {{NAME}} placeholders are filled from LEGAL above.
+const EMAIL_TEXT = `${EMAIL.user}@${EMAIL.domain}`;
+
+const terms = [
+  ["1. Who we are", `<p>Unlisted is run by {{OPERATOR_NAME}}, a sole trader trading as Unlisted ("we", "us"). Address: {{BUSINESS_ADDRESS}}. Contact: ${EMAIL_TEXT}. These terms apply when you use our website or subscribe.</p>`],
+  ["2. What we provide", `<p>A subscription gives you access to curated lists of UK firms in the sectors shown on our website. For each firm we give the name, type, size band, town, website and a link to its own contact or careers page. Each download includes a tracker tab and message templates. We update the lists monthly.</p>
+<p>We do not provide personal contact details such as named individuals' emails or phone numbers.</p>`],
+  ["3. No guarantee of results", `<p>The lists help you research employers. We do not promise interviews, replies or job offers. What happens after you contact a firm is up to you and the firm.</p>`],
+  ["4. Your licence to use the lists", `<p>We give you a personal, non-transferable licence to use the lists for your own job search while your subscription is active, and to keep files you downloaded during that time for the same purpose. You must not:</p>
+<ul>
+<li>share, resell, publish or redistribute the lists or any part of them;</li>
+<li>use the lists to send bulk or automated marketing;</li>
+<li>scrape, copy or extract data from our website by automated means;</li>
+<li>use the lists to build a competing product.</li>
+</ul>
+<p>We may suspend or end access if you break these rules.</p>`],
+  ["5. Price and payment", `<p>The subscription costs £9.99 a month. {{VAT_SENTENCE}} It renews automatically each month on the date you first subscribed, until you cancel. Payments are processed by Stripe. We will tell you at least 30 days before any price change, and you can cancel before it takes effect.</p>`],
+  ["6. Cancelling", `<p>You can cancel at any time online through your account, using the Stripe customer portal. Cancelling stops future payments. You keep access until the end of the month you have paid for.</p>`],
+  ["7. Your 14-day cancellation right", `<p>As a consumer you normally have 14 days from the start of the subscription to cancel and get a refund. Because the lists are digital content you can download straight away, we ask you at checkout to agree to immediate access and to confirm you understand that you lose this right once you start downloading. If you have not downloaded anything in the first 14 days, you can still cancel for a full refund.</p>`],
+  ["8. Refunds", `<p>Apart from section 7 and your statutory rights, payments are non-refundable. If something goes wrong on our side (for example, a file will not open or is badly wrong), contact us and we will fix it or refund you for that month.</p>`],
+  ["9. Accuracy of the data", `<p>We build the lists from public registers and firms' own websites and check them before release. Firms change, so details can go out of date between updates. The lists are provided "as is", and we do not guarantee every detail is complete or accurate. Tell us about errors at ${EMAIL_TEXT} and we will correct them in the next update.</p>`],
+  ["10. Our liability", `<p>Nothing in these terms limits liability that cannot be limited by law, including for death or personal injury caused by negligence, or fraud. Otherwise, our total liability to you is limited to the amount you paid us in the 12 months before the claim. We are not liable for indirect losses or for lost opportunities, including any job you did not get.</p>`],
+  ["11. Changes to these terms", `<p>We may update these terms. We will email subscribers about material changes at least 30 days before they apply.</p>`],
+  ["12. Law", `<p>These terms are governed by the law of England and Wales. You can bring a claim in the courts of England and Wales, or in the courts of Scotland or Northern Ireland if you live there.</p>`],
+];
+
+const privacyRows = [
+  ["Email address (waitlist and free sample)", "To send the weekly sample and launch news", "Consent"],
+  ["Email address and account details (subscribers)", "To give you access and send account emails", "Contract"],
+  ["Payment details", "Handled by Stripe. We see only the last four digits, the card type and the payment status", "Contract"],
+  ["Billing records", "To meet tax and accounting rules", "Legal obligation"],
+  ["Messages you send us", "To answer you", "Legitimate interests"],
+  ["Basic technical data (IP address, browser) in server logs", "To keep the site secure", "Legitimate interests"],
+];
+
+const privacy = [
+  ["Who is responsible", `<p>{{OPERATOR_NAME}}, a sole trader trading as Unlisted, is the controller of your personal data. Address: {{BUSINESS_ADDRESS}}. Contact: ${EMAIL_TEXT}. {{ICO_SENTENCE}}</p>`],
+  ["What we collect and why", `${dataTable(["Data", "Why", "Lawful basis"], privacyRows, "What we collect and why")}
+<p>We do not sell your data or use it for advertising.</p>`],
+  ["Who we share it with", `<p>We use these processors, who handle data only on our instructions:</p>
+<ul>
+<li><strong>Cloudflare</strong>: website hosting and storage of waitlist and account data.</li>${STRIPE_LIVE ? `
+<li><strong>Stripe</strong>: payments and subscription management.</li>` : ""}
+<li><strong>{{EMAIL_PROVIDER}}</strong>: sending emails.</li>
+</ul>
+<p>Some processors may handle data outside the UK. Where they do, they use approved safeguards such as the UK International Data Transfer Agreement or addendum.</p>`],
+  ["How long we keep it", `<ul>
+<li>Waitlist emails: until you unsubscribe, or 12 months after launch if you never subscribe.</li>
+<li>Account data: deleted within 30 days of your subscription ending.</li>
+<li>Billing records: 6 years, for tax.</li>
+</ul>`],
+  ["Your rights", `<p>You can ask to see, correct or delete your data, object to or limit how we use it, or take a copy. You can withdraw consent at any time, for example with the unsubscribe link in every email. Email ${EMAIL_TEXT} and we will reply within one month.</p>
+<p>If you are unhappy with how we handle your data, you can complain to the Information Commissioner's Office (<a href="https://ico.org.uk">ico.org.uk</a>).</p>`],
+  ["Firms in our lists", `<p>Our lists cover businesses, not people. We do not include named individuals or personal contact details. If you think a listing includes personal data, or a firm wants to be removed, email ${EMAIL_TEXT}.</p>`],
+];
+
+// Build note: the site sets no cookies today. The checkout sentence appears only once Stripe and the members area are live.
+const cookies = [
+  [null, `${STRIPE_LIVE
+    ? `<p>We only use cookies that are strictly necessary for the site to work: keeping you logged in to the members area (once it exists), and Stripe's cookies during checkout, which prevent fraud. These do not need consent, so there is no cookie banner.</p>`
+    : `<p>At the moment the site sets no cookies.</p>`}
+<p>We do not use advertising or tracking cookies. If we add analytics later, we will use a tool that sets no cookies, or ask for your consent first.</p>`],
+];
+
+// Build note: list the SRA, Ofgem, ICAEW and FCA only once their re-use terms are confirmed (the owner is checking).
+const sourceRows = [
+  ["Companies House", "Company names, numbers, status, registered town, industry codes, accounts category", "Contains public sector information licensed under the Open Government Licence v3.0."],
+  ["Firms' own websites", "Website address and contact or careers page link", "Links only; we do not copy their content."],
+  // ["Solicitors Regulation Authority (SRA)", "", ""],   // re-use terms not confirmed yet
+  // ["Ofgem", "", ""],                                   // re-use terms not confirmed yet
+  // ["ICAEW", "", ""],                                   // re-use terms not confirmed yet
+  // ["Financial Conduct Authority (FCA)", "", ""],       // re-use terms not confirmed yet: do not use FCA data until the licence is confirmed
+];
+
+const sources = [
+  [null, `<p>We build our lists from public sources and firms' own websites, then filter and check them.</p>
+${dataTable(["Source", "What we use", "Terms"], sourceRows, "Data sources")}
+<p>We are not affiliated with or endorsed by Companies House, the SRA, Ofgem or the FCA.</p>
+<p><strong>Corrections and removal.</strong> If you run a listed firm and want a detail corrected or the firm removed, email ${EMAIL_TEXT}. We will act within 5 working days and remove it from the next update.</p>`],
+];
+
+function dataTable(cols, rows, label) {
+  return `<div class="legal-table-wrap"><table class="legal-table" aria-label="${label}">
+<thead><tr>${cols.map((c) => `<th scope="col">${c}</th>`).join("")}</tr></thead>
+<tbody>
+${rows.map((r) => `<tr>${r.map((v, i) => `<td data-label="${cols[i]}">${v}</td>`).join("")}</tr>`).join("\n")}
+</tbody>
+</table></div>`;
+}
+
+const legalLinks = [["/terms/", "Terms of service"], ["/privacy/", "Privacy policy"], ["/cookies/", "Cookie notice"], ["/sources/", "Data sources"]];
+const slug = (t) => t.toLowerCase().replace(/^\d+\.\s*/, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+function fill(text) {
+  return text.replace(/\{\{([A-Z_]+)\}\}/g, (m, k) => (LEGAL[k] === null || LEGAL[k] === undefined ? m : LEGAL[k]))
+    .replace(/ <\/p>/g, "</p>"); // an empty sentence (such as ICO_SENTENCE) leaves no trailing space
+}
+
+function legalPage({ path, title, description, sections, isSources = false }) {
+  const toc = sections.length > 3;
+  const body = sections.map(([h, html]) => h
+    ? `<section class="legal-section" id="${slug(h)}" aria-labelledby="${slug(h)}-h"><h2 id="${slug(h)}-h">${h}</h2>
+${html}
+</section>`
+    : `<section class="legal-section">${html}</section>`).join("\n");
+  return fill(`<!doctype html>
+<html lang="en-GB">
+${pageHead({ title: `${title} | ${BRAND}`, description, path, noindex: LEGAL_NOINDEX })}
+<body>
+
+${topBar(false)}
+
+<main class="legal" id="top">
+  <div class="legal-head">
+    <h1 class="lines"><span class="line"><span data-line style="--i:0">${title}</span></span></h1>
+    <p class="standfirst" data-fade>${description}</p>
+    <p class="updated" data-fade>Last updated: ${LEGAL_UPDATED}</p>
+  </div>
+  <div class="legal-grid">
+    <nav class="legal-side" aria-label="${toc ? "On this page" : "Legal pages"}"><ul>
+${(toc ? sections.map(([h]) => [`#${slug(h)}`, h]) : legalLinks.filter(([href]) => href !== path)).map(([href, label]) => `      <li><a href="${href}">${label}</a></li>`).join("\n")}
+    </ul></nav>
+    <article class="legal-body">
+${body}
+    </article>
+  </div>
+</main>
+
+${footer({ sources: isSources })}
+
+<script src="/js/site.js" defer></script>
+</body>
+</html>
+`).replaceAll(EMAIL_TEXT, mail());
+}
+
+const pages = [
+  { file: "index.html", path: "/", html },
+  { file: "terms/index.html", path: "/terms/", html: legalPage({ path: "/terms/", title: "Terms of service", description: `The terms for using ${BRAND} and its ${PRICE} a month subscription: what you get, your licence, payment, cancelling and refunds.`, sections: terms }) },
+  { file: "privacy/index.html", path: "/privacy/", html: legalPage({ path: "/privacy/", title: "Privacy policy", description: `What personal data ${BRAND} collects, why, who it is shared with, how long it is kept and your rights.`, sections: privacy }) },
+  { file: "cookies/index.html", path: "/cookies/", html: legalPage({ path: "/cookies/", title: "Cookie notice", description: `How ${BRAND} uses cookies, and which ones the site sets.`, sections: cookies }) },
+  { file: "sources/index.html", path: "/sources/", html: legalPage({ path: "/sources/", title: "Data sources", description: `The public sources ${BRAND} builds its lists from, how each is used, and how firms can ask for corrections or removal.`, sections: sources, isSources: true }) },
+];
+
+const indexable = pages.filter((p) => p.path === "/" || !LEGAL_NOINDEX);
+const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${indexable.map((p) => `  <url><loc>${SITE_URL}${p.path}</loc></url>`).join("\n")}
+</urlset>
+`;
+const robots = `User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: ${SITE_URL}/sitemap.xml
+`;
+
+// ---- Placeholder guard, then write ----------------------------------------------------------------------
+const strict = process.argv.includes("--strict");
+const allow = process.argv.includes("--allow-placeholders");
+const left = new Map();
+for (const p of pages) for (const m of p.html.matchAll(/\{\{([A-Z_]+)\}\}/g)) left.set(m[1], [...(left.get(m[1]) || []), p.path]);
+if (left.size) {
+  console.warn(`\nWARNING: ${left.size} legal placeholder(s) still unfilled. Set them in the LEGAL config at the top of build.mjs:`);
+  for (const [k, where] of left) console.warn(`  {{${k}}}  on ${[...new Set(where)].join(", ")}`);
+  if (strict && !allow) {
+    console.error("\nBuild stopped: placeholders would ship. Fill them, or run `npm run build -- --allow-placeholders` for a preview.\n");
+    process.exit(1);
+  }
+  console.warn("");
+}
+
+const out = (f) => new URL(`./public/${f}`, import.meta.url);
+for (const p of pages) {
+  mkdirSync(new URL(".", out(p.file)), { recursive: true });
+  writeFileSync(out(p.file), p.html);
+  console.log(`public/${p.file} written,`, p.html.length, "bytes");
+}
+writeFileSync(out("sitemap.xml"), sitemap);
+writeFileSync(out("robots.txt"), robots);
+console.log("public/sitemap.xml and public/robots.txt written");
+
