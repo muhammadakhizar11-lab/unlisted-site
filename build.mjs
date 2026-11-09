@@ -39,12 +39,22 @@ const faqs = [
   ["Who is behind it?", "Two people who built the data tool themselves and use it to research the firms in each list."],
 ];
 
+// One purple family for the eleven list panels, alternating lighter and deeper steps.
+const panelTones = ["#F3EEFD", "#E4D8FA", "#EEE6FC", "#DCCCF8", "#F1EAFC", "#E2D5FA", "#ECE3FB", "#D9C8F7", "#F2ECFD", "#E6DBFA", "#EFE7FC"];
+
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+
+// Section heading with a mask, so the words can rise into place.
+const head = (id, cls, inner) => `<h2 id="${id}" class="${cls} reveal-head"><span class="mask"><span class="mask-in">${inner}</span></span></h2>`;
+
+// Hero file: the first ten example rows from the finance lists.
+const heroRows = lists.slice(0, 4).flatMap((l) => l.rows).slice(0, 10)
+  .map((r, i) => `<tr data-row><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${r[2]}</td><td>${r[3]}</td><td><span class="link-ex">Website</span></td><td><span class="link-ex">${i % 2 ? "Contact page" : "Careers page"}</span></td></tr>`).join("\n            ");
 
 const tableRows = (l) => l.rows.map((r) => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${r[2]}</td><td>${r[3]}</td><td><span class="link-ex">Contact page</span></td></tr>`).join("");
 
 const listRows = lists.map((l, i) => `
-      <details class="lineup-item" data-reveal${i === 0 ? " open" : ""}>
+      <details class="lineup-item" style="--panel:${panelTones[i]}" data-reveal${i === 0 ? " open" : ""}>
         <summary><span class="l-name">${esc(l.name)}</span><span class="l-types">${esc(l.types)}</span><span class="l-roles">${esc(l.roles)}</span></summary>
         <div class="lineup-body" data-ui>
           <table class="ui-table" aria-label="Example rows for ${esc(l.name)}">
@@ -86,18 +96,30 @@ const html = `<!doctype html>
 <main id="top">
 
   <section class="hero" aria-labelledby="h1">
-    <div class="hero-side">
-      <p class="support" data-fade>Eleven curated lists of UK firms in finance, consulting, tech, energy and law. Each firm comes with its contact or careers page. ${PRICE} a month.</p>
-      <a class="btn" href="#join" data-fade>Join the waitlist</a>
-    </div>
     <h1 id="h1" class="lines">
       <span class="line"><span data-line style="--i:0">Firms worth</span></span>
       <span class="line"><span data-line style="--i:1">contacting.</span></span>
     </h1>
+    <div class="hero-side">
+      <p class="support" data-fade>Eleven curated lists of UK firms in finance, consulting, tech, energy and law. Each firm comes with its contact or careers page. ${PRICE} a month.</p>
+      <a class="btn" href="#join" data-fade>Join the waitlist</a>
+    </div>
+    <figure class="hero-file" data-ui>
+      <figcaption class="file-bar"><span class="file-name">Investment and banking lists</span><span class="file-note">Example file, fictional firms</span></figcaption>
+      <div class="file-tabs" aria-hidden="true"><span class="on">Firms</span><span>Tracker</span><span>Templates</span></div>
+      <div class="file-crop">
+        <table class="ui-table file-table" aria-label="Example list file with fictional firms">
+          <thead><tr><th scope="col">Firm</th><th scope="col">Type</th><th scope="col">Size</th><th scope="col">Town</th><th scope="col">Website</th><th scope="col">Contact</th></tr></thead>
+          <tbody>
+            ${heroRows}
+          </tbody>
+        </table>
+      </div>
+    </figure>
   </section>
 
   <section class="how" aria-labelledby="how-h">
-    <h2 id="how-h" class="section-head" data-reveal>From list to first message.</h2>
+    ${head("how-h", "section-head", "From list to first message.")}
     <div class="how-col">
       <div class="exchange" data-reveal>
         <p class="order">First, pick the lists you want.</p>
@@ -113,7 +135,7 @@ const html = `<!doctype html>
       <div class="exchange" data-reveal>
         <p class="order">Then, open the file and sort it.</p>
         <div class="call" data-ui>
-          <table class="ui-table" aria-label="Example file">
+          <table class="ui-table how-file" aria-label="Example file">
             <thead><tr><th scope="col">Firm</th><th scope="col">Type</th><th scope="col">Size</th><th scope="col">Link</th></tr></thead>
             <tbody>
               <tr><td>Marlowe Row Capital</td><td>Hedge fund</td><td>Boutique</td><td><span class="link-ex">Careers page</span></td></tr>
@@ -143,13 +165,13 @@ const html = `<!doctype html>
   </section>
 
   <section class="lists" id="lists" aria-labelledby="lists-h">
-    <h2 id="lists-h" class="section-head" data-reveal>Eleven lists. Open one.</h2>
+    ${head("lists-h", "section-head", "Eleven lists. Open one.")}
     <div class="lineup">${listRows}
     </div>
   </section>
 
   <section class="pricing" id="pricing" aria-labelledby="pricing-h">
-    <h2 id="pricing-h" class="price-line" data-reveal>Every list, <span class="price-block">${PRICE}</span> a month.</h2>
+    ${head("pricing-h", "price-line", `Every list, <span class="price-block">${PRICE}</span> a month.`)}
     <div class="price-foot">
       <p data-reveal>Includes all eleven lists, the monthly update, the tracker and the message templates. Cancel online at any time.</p>
       <a class="btn on-accent" href="#join" data-reveal>Join the waitlist</a>
@@ -157,20 +179,20 @@ const html = `<!doctype html>
   </section>
 
   <section class="faq" id="faq" aria-labelledby="faq-h">
-    <h2 id="faq-h" class="faq-head" data-reveal>Questions, answered.</h2>
+    ${head("faq-h", "faq-head", "Questions, answered.")}
     <div class="faq-list">${faqRows}
     </div>
   </section>
 
   <section class="join" id="join" aria-labelledby="join-h">
-    <h2 id="join-h" class="section-head" data-reveal>Free sample, every week.</h2>
+    ${head("join-h", "section-head", "Free sample, every week.")}
     <div class="join-grid">
     <form class="join-form" id="join-form" action="/api/waitlist" method="post" novalidate>
       <p class="join-line" data-reveal>Email me one firm from every list.</p>
       <div class="join-row" data-reveal>
         <label class="sr-only" for="email">Email address</label>
         <input id="email" name="email" type="email" autocomplete="email" placeholder="you@email.com" required>
-        <button type="submit" class="btn">Send the sample</button>
+        <button type="submit" class="btn on-accent">Send the sample</button>
       </div>
       <p class="join-note">We only use your email for the sample and launch news. Unsubscribe any time. <a href="/privacy">Privacy policy</a>.</p>
       <p class="join-status" id="join-status" role="status" aria-live="polite"></p>
@@ -203,7 +225,9 @@ const html = `<!doctype html>
   <p class="foot-legal">© 2026 ${BRAND}. Not affiliated with or endorsed by Companies House, the FCA or the SRA.</p>
 </footer>
 
-<script src="js/site.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" integrity="sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN4t9Euv9Vc" crossorigin="anonymous" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" integrity="sha384-P8VzCVnT9NBUkMrpcIZrJbA7EBjJvh/fJS6PmP+4nLIM284DtsImIv8D0fFjIkeh" crossorigin="anonymous" defer></script>
+<script src="js/site.js" defer></script>
 </body>
 </html>
 `;

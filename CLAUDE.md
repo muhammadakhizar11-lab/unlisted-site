@@ -21,7 +21,10 @@ Unlisted (working name, may change) sells curated lists of UK firms that job see
 
 ## Design rules
 - Brand colour is purple (#6D28D9) by the owner's choice. Keep it even though Taste Skill flags violet.
-- Design skills are installed in `.agents/skills`: `design-taste-frontend` (Taste Skill), `impeccable`, and Emil Kowalski's skills (`emil-design-eng`, animation skills). Follow them for any UI work.
+- Design skills are installed in `.agents/skills` (and `.claude/skills` for ui-ux-pro-max): Taste Skill (`design-taste-frontend`), `impeccable`, Emil Kowalski (`emil-design-eng` and animation skills), LottieFiles `motion-design` (timing and easing principles), GSAP skills (`gsap-core`, `gsap-timeline`, `gsap-scrolltrigger`, `gsap-plugins`, `gsap-performance`), genjutsu (`cast` for one element, `paint` for visual identity, `bunshin` for whole sites), `anatomy` (isometric SVG illustrations), Anthropic's `frontend-design`, and `ui-ux-pro-max`. Follow them for UI work. Ignore the React, Swift and mobile ones (gsap-react, gsap-frameworks, apple-design, write-swift, mobile-native, animate-expo).
+- Skills run with full agent permissions. Never run `anatomy/scripts/publish.mjs` or any script that pushes or submits anything outside this repo.
+- GSAP is free, including its plugins. Load it from npm or a pinned CDN version. Keep the page light: respect `prefers-reduced-motion`, animate transforms and opacity only.
+- Take design references from the inspiration sites in the plan (Casper's Caviar, Book of Shapes, Tim Ricks), but never copy their layout, text or assets.
 - Check UI changes with `node .agents/skills/design-taste-frontend/scripts/lint.mjs public/index.html public/css public/js` and `inspect.mjs public/index.html` (needs Chrome; set `CHROME_PATH`). Fix every FAIL except the accepted purple one.
 - British English. Plain, short copy. No invented proof (no fake users, quotes or stats).
 
@@ -31,6 +34,9 @@ Unlisted (working name, may change) sells curated lists of UK firms that job see
 - Do not imply endorsement by Companies House, the FCA or the SRA. Credit data sources on `/sources`.
 - Do not use FCA-sourced data until the re-use licence is confirmed.
 - Waitlist emails: opt-in only, unsubscribe link in every email.
+
+## Landing page plan
+See `LANDING-PLAN.md` for the prioritised visual improvements.
 
 ## Open to-dos
 See README.md.
