@@ -207,5 +207,5 @@ const html = `<!doctype html>
 </body>
 </html>
 `;
-writeFileSync(new URL("./index.html", import.meta.url), html);
-console.log("index.html written,", html.length, "bytes");
+writeFileSync(new URL("./public/index.html", import.meta.url), html);
+console.log("public/index.html written,", html.length, "bytes");
