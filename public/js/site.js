@@ -13,7 +13,7 @@
     io.observe(e);
   });
 
-  // Waitlist form: posts to /api/waitlist (see functions/api/waitlist.js).
+  // Waitlist form: posts to /api/waitlist (see src/worker.js).
   var form = document.getElementById("join-form");
   if (!form) return;
   var status = document.getElementById("join-status");
