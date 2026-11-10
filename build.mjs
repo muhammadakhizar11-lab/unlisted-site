@@ -219,7 +219,7 @@ const html = `<!doctype html>
     <div><p class="f1">${BRAND}</p><p>Curated lists of UK firms for job seekers.</p></div>
     <div><p class="f1">Product</p><p><a href="#lists">Lists</a></p><p><a href="#pricing">Pricing</a></p><p><a href="#faq">Questions</a></p></div>
     <div><p class="f1">Legal</p><p><a href="/terms">Terms</a></p><p><a href="/privacy">Privacy</a></p><p><a href="/cookies">Cookies</a></p><p><a href="/sources">Data sources</a></p></div>
-    <div><p class="f1">Contact</p><p><a href="mailto:hello@example.com">hello@example.com</a></p><p>United Kingdom</p></div>
+    <div><p class="f1">Contact</p><p><a href="mailto:unlisted.joblist@gmail.com">unlisted.joblist@gmail.com</a></p><p>United Kingdom</p></div>
   </div>
   <p class="foot-word" aria-hidden="true">${BRAND.toUpperCase()}</p>
   <p class="foot-legal">© 2026 ${BRAND}. Not affiliated with or endorsed by Companies House, the FCA or the SRA.</p>
