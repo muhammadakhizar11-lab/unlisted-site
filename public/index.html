@@ -26,18 +26,39 @@
 <main id="top">
 
   <section class="hero" aria-labelledby="h1">
-    <div class="hero-side">
-      <p class="support" data-fade>Eleven curated lists of UK firms in finance, consulting, tech, energy and law. Each firm comes with its contact or careers page. £9.99 a month.</p>
-      <a class="btn" href="#join" data-fade>Join the waitlist</a>
-    </div>
     <h1 id="h1" class="lines">
       <span class="line"><span data-line style="--i:0">Firms worth</span></span>
       <span class="line"><span data-line style="--i:1">contacting.</span></span>
     </h1>
+    <div class="hero-side">
+      <p class="support" data-fade>Eleven curated lists of UK firms in finance, consulting, tech, energy and law. Each firm comes with its contact or careers page. £9.99 a month.</p>
+      <a class="btn" href="#join" data-fade>Join the waitlist</a>
+    </div>
+    <figure class="hero-file" data-ui>
+      <figcaption class="file-bar"><span class="file-name">Investment and banking lists</span><span class="file-note">Example file, fictional firms</span></figcaption>
+      <div class="file-tabs" aria-hidden="true"><span class="on">Firms</span><span>Tracker</span><span>Templates</span></div>
+      <div class="file-crop">
+        <table class="ui-table file-table" aria-label="Example list file with fictional firms">
+          <thead><tr><th scope="col">Firm</th><th scope="col">Type</th><th scope="col">Size</th><th scope="col">Town</th><th scope="col">Website</th><th scope="col">Contact</th></tr></thead>
+          <tbody>
+            <tr data-row><td>Marlowe Row Capital</td><td>Hedge fund</td><td>Boutique</td><td>London</td><td><span class="link-ex">Website</span></td><td><span class="link-ex">Careers page</span></td></tr>
+            <tr data-row><td>Calder Street Trading</td><td>Prop trading</td><td>Mid-size</td><td>London</td><td><span class="link-ex">Website</span></td><td><span class="link-ex">Contact page</span></td></tr>
+            <tr data-row><td>Harbour Gate Asset Management</td><td>Asset manager</td><td>Large</td><td>Edinburgh</td><td><span class="link-ex">Website</span></td><td><span class="link-ex">Careers page</span></td></tr>
+            <tr data-row><td>Ainsley Corporate Finance</td><td>M&amp;A advisory</td><td>Boutique</td><td>Manchester</td><td><span class="link-ex">Website</span></td><td><span class="link-ex">Contact page</span></td></tr>
+            <tr data-row><td>Northfield Merchant Bank</td><td>Bank</td><td>Large</td><td>London</td><td><span class="link-ex">Website</span></td><td><span class="link-ex">Careers page</span></td></tr>
+            <tr data-row><td>Vesper Partners</td><td>Corporate finance</td><td>Mid-size</td><td>Leeds</td><td><span class="link-ex">Website</span></td><td><span class="link-ex">Contact page</span></td></tr>
+            <tr data-row><td>Thornbury Private Client</td><td>Wealth manager</td><td>Mid-size</td><td>Bristol</td><td><span class="link-ex">Website</span></td><td><span class="link-ex">Careers page</span></td></tr>
+            <tr data-row><td>Eastgate Family Office</td><td>Family office</td><td>Boutique</td><td>London</td><td><span class="link-ex">Website</span></td><td><span class="link-ex">Contact page</span></td></tr>
+            <tr data-row><td>Lowther &amp; Reed Financial Planning</td><td>Planning firm</td><td>Boutique</td><td>York</td><td><span class="link-ex">Website</span></td><td><span class="link-ex">Careers page</span></td></tr>
+            <tr data-row><td>Ashcombe Equity Partners</td><td>Private equity</td><td>Mid-size</td><td>London</td><td><span class="link-ex">Website</span></td><td><span class="link-ex">Contact page</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </figure>
   </section>
 
   <section class="how" aria-labelledby="how-h">
-    <h2 id="how-h" class="section-head" data-reveal>From list to first message.</h2>
+    <h2 id="how-h" class="section-head reveal-head"><span class="mask"><span class="mask-in">From list to first message.</span></span></h2>
     <div class="how-col">
       <div class="exchange" data-reveal>
         <p class="order">First, pick the lists you want.</p>
@@ -53,7 +74,7 @@
       <div class="exchange" data-reveal>
         <p class="order">Then, open the file and sort it.</p>
         <div class="call" data-ui>
-          <table class="ui-table" aria-label="Example file">
+          <table class="ui-table how-file" aria-label="Example file">
             <thead><tr><th scope="col">Firm</th><th scope="col">Type</th><th scope="col">Size</th><th scope="col">Link</th></tr></thead>
             <tbody>
               <tr><td>Marlowe Row Capital</td><td>Hedge fund</td><td>Boutique</td><td><span class="link-ex">Careers page</span></td></tr>
@@ -83,9 +104,9 @@
   </section>
 
   <section class="lists" id="lists" aria-labelledby="lists-h">
-    <h2 id="lists-h" class="section-head" data-reveal>Eleven lists. Open one.</h2>
+    <h2 id="lists-h" class="section-head reveal-head"><span class="mask"><span class="mask-in">Eleven lists. Open one.</span></span></h2>
     <div class="lineup">
-      <details class="lineup-item" data-reveal open>
+      <details class="lineup-item" style="--panel:#F3EEFD" data-reveal open>
         <summary><span class="l-name">Investment and trading</span><span class="l-types">Hedge funds, prop traders, asset managers</span><span class="l-roles">Analyst, trader, quant researcher</span></summary>
         <div class="lineup-body" data-ui>
           <table class="ui-table" aria-label="Example rows for Investment and trading">
@@ -95,7 +116,7 @@
           <p class="note">Example rows with fictional firms, to show the format. The real file lists real firms.</p>
         </div>
       </details>
-      <details class="lineup-item" data-reveal>
+      <details class="lineup-item" style="--panel:#E4D8FA" data-reveal>
         <summary><span class="l-name">Banking and capital markets</span><span class="l-types">Banks, corporate finance, M&amp;A advisory</span><span class="l-roles">Analyst, associate, sales and trading</span></summary>
         <div class="lineup-body" data-ui>
           <table class="ui-table" aria-label="Example rows for Banking and capital markets">
@@ -105,7 +126,7 @@
           <p class="note">Example rows with fictional firms, to show the format. The real file lists real firms.</p>
         </div>
       </details>
-      <details class="lineup-item" data-reveal>
+      <details class="lineup-item" style="--panel:#EEE6FC" data-reveal>
         <summary><span class="l-name">Wealth management</span><span class="l-types">Private client, family offices, planners</span><span class="l-roles">Paraplanner, analyst, adviser</span></summary>
         <div class="lineup-body" data-ui>
           <table class="ui-table" aria-label="Example rows for Wealth management">
@@ -115,7 +136,7 @@
           <p class="note">Example rows with fictional firms, to show the format. The real file lists real firms.</p>
         </div>
       </details>
-      <details class="lineup-item" data-reveal>
+      <details class="lineup-item" style="--panel:#DCCCF8" data-reveal>
         <summary><span class="l-name">Private equity and venture capital</span><span class="l-types">Buyout funds, growth equity, venture</span><span class="l-roles">Analyst, investment associate</span></summary>
         <div class="lineup-body" data-ui>
           <table class="ui-table" aria-label="Example rows for Private equity and venture capital">
@@ -125,7 +146,7 @@
           <p class="note">Example rows with fictional firms, to show the format. The real file lists real firms.</p>
         </div>
       </details>
-      <details class="lineup-item" data-reveal>
+      <details class="lineup-item" style="--panel:#F1EAFC" data-reveal>
         <summary><span class="l-name">Insurance</span><span class="l-types">Brokers, Lloyd's agents, reinsurers, actuaries</span><span class="l-roles">Graduate scheme, underwriter, actuarial analyst</span></summary>
         <div class="lineup-body" data-ui>
           <table class="ui-table" aria-label="Example rows for Insurance">
@@ -135,7 +156,7 @@
           <p class="note">Example rows with fictional firms, to show the format. The real file lists real firms.</p>
         </div>
       </details>
-      <details class="lineup-item" data-reveal>
+      <details class="lineup-item" style="--panel:#E2D5FA" data-reveal>
         <summary><span class="l-name">Consulting</span><span class="l-types">Strategy, economics, management consulting</span><span class="l-roles">Analyst, consultant, researcher</span></summary>
         <div class="lineup-body" data-ui>
           <table class="ui-table" aria-label="Example rows for Consulting">
@@ -145,7 +166,7 @@
           <p class="note">Example rows with fictional firms, to show the format. The real file lists real firms.</p>
         </div>
       </details>
-      <details class="lineup-item" data-reveal>
+      <details class="lineup-item" style="--panel:#ECE3FB" data-reveal>
         <summary><span class="l-name">Fintech and payments</span><span class="l-types">Payments, lending, crypto, regtech</span><span class="l-roles">Data analyst, product, operations</span></summary>
         <div class="lineup-body" data-ui>
           <table class="ui-table" aria-label="Example rows for Fintech and payments">
@@ -155,7 +176,7 @@
           <p class="note">Example rows with fictional firms, to show the format. The real file lists real firms.</p>
         </div>
       </details>
-      <details class="lineup-item" data-reveal>
+      <details class="lineup-item" style="--panel:#D9C8F7" data-reveal>
         <summary><span class="l-name">Tech and data</span><span class="l-types">Software, data and AI, cybersecurity</span><span class="l-roles">Developer, data scientist, analyst</span></summary>
         <div class="lineup-body" data-ui>
           <table class="ui-table" aria-label="Example rows for Tech and data">
@@ -165,7 +186,7 @@
           <p class="note">Example rows with fictional firms, to show the format. The real file lists real firms.</p>
         </div>
       </details>
-      <details class="lineup-item" data-reveal>
+      <details class="lineup-item" style="--panel:#F2ECFD" data-reveal>
         <summary><span class="l-name">Energy</span><span class="l-types">Power trading, renewables, oil and gas</span><span class="l-roles">Analyst, trader, graduate engineer</span></summary>
         <div class="lineup-body" data-ui>
           <table class="ui-table" aria-label="Example rows for Energy">
@@ -175,7 +196,7 @@
           <p class="note">Example rows with fictional firms, to show the format. The real file lists real firms.</p>
         </div>
       </details>
-      <details class="lineup-item" data-reveal>
+      <details class="lineup-item" style="--panel:#E6DBFA" data-reveal>
         <summary><span class="l-name">Accounting</span><span class="l-types">Audit, tax, insolvency and restructuring</span><span class="l-roles">Trainee, audit associate, tax analyst</span></summary>
         <div class="lineup-body" data-ui>
           <table class="ui-table" aria-label="Example rows for Accounting">
@@ -185,7 +206,7 @@
           <p class="note">Example rows with fictional firms, to show the format. The real file lists real firms.</p>
         </div>
       </details>
-      <details class="lineup-item" data-reveal>
+      <details class="lineup-item" style="--panel:#EFE7FC" data-reveal>
         <summary><span class="l-name">Law</span><span class="l-types">Commercial law firms and solicitors</span><span class="l-roles">Trainee solicitor, paralegal, legal assistant</span></summary>
         <div class="lineup-body" data-ui>
           <table class="ui-table" aria-label="Example rows for Law">
@@ -199,7 +220,7 @@
   </section>
 
   <section class="pricing" id="pricing" aria-labelledby="pricing-h">
-    <h2 id="pricing-h" class="price-line" data-reveal>Every list, <span class="price-block">£9.99</span> a month.</h2>
+    <h2 id="pricing-h" class="price-line reveal-head"><span class="mask"><span class="mask-in">Every list, <span class="price-block">£9.99</span> a month.</span></span></h2>
     <div class="price-foot">
       <p data-reveal>Includes all eleven lists, the monthly update, the tracker and the message templates. Cancel online at any time.</p>
       <a class="btn on-accent" href="#join" data-reveal>Join the waitlist</a>
@@ -207,7 +228,7 @@
   </section>
 
   <section class="faq" id="faq" aria-labelledby="faq-h">
-    <h2 id="faq-h" class="faq-head" data-reveal>Questions, answered.</h2>
+    <h2 id="faq-h" class="faq-head reveal-head"><span class="mask"><span class="mask-in">Questions, answered.</span></span></h2>
     <div class="faq-list">
         <details class="faq-item" data-reveal><summary>Where does the data come from?</summary><p>Public registers and firms' own websites: Companies House, the SRA register and similar sources. Each list is filtered and checked before it goes out. The sources page names every source and how it is used.</p></details>
         <details class="faq-item" data-reveal><summary>Do I get emails or phone numbers?</summary><p>No. Each firm comes with the link to its own contact or careers page, so you reach the firm through the channel it chose. We do not sell personal contact details.</p></details>
@@ -219,14 +240,14 @@
   </section>
 
   <section class="join" id="join" aria-labelledby="join-h">
-    <h2 id="join-h" class="section-head" data-reveal>Free sample, every week.</h2>
+    <h2 id="join-h" class="section-head reveal-head"><span class="mask"><span class="mask-in">Free sample, every week.</span></span></h2>
     <div class="join-grid">
     <form class="join-form" id="join-form" action="/api/waitlist" method="post" novalidate>
       <p class="join-line" data-reveal>Email me one firm from every list.</p>
       <div class="join-row" data-reveal>
         <label class="sr-only" for="email">Email address</label>
         <input id="email" name="email" type="email" autocomplete="email" placeholder="you@email.com" required>
-        <button type="submit" class="btn">Send the sample</button>
+        <button type="submit" class="btn on-accent">Send the sample</button>
       </div>
       <p class="join-note">We only use your email for the sample and launch news. Unsubscribe any time. <a href="/privacy">Privacy policy</a>.</p>
       <p class="join-status" id="join-status" role="status" aria-live="polite"></p>
@@ -253,12 +274,14 @@
     <div><p class="f1">Unlisted</p><p>Curated lists of UK firms for job seekers.</p></div>
     <div><p class="f1">Product</p><p><a href="#lists">Lists</a></p><p><a href="#pricing">Pricing</a></p><p><a href="#faq">Questions</a></p></div>
     <div><p class="f1">Legal</p><p><a href="/terms">Terms</a></p><p><a href="/privacy">Privacy</a></p><p><a href="/cookies">Cookies</a></p><p><a href="/sources">Data sources</a></p></div>
-    <div><p class="f1">Contact</p><p><a href="mailto:hello@example.com">hello@example.com</a></p><p>United Kingdom</p></div>
+    <div><p class="f1">Contact</p><p><a href="mailto:unlisted.joblist@gmail.com">unlisted.joblist@gmail.com</a></p><p>United Kingdom</p></div>
   </div>
   <p class="foot-word" aria-hidden="true">UNLISTED</p>
   <p class="foot-legal">© 2026 Unlisted. Not affiliated with or endorsed by Companies House, the FCA or the SRA.</p>
 </footer>
 
-<script src="js/site.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" integrity="sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN4t9Euv9Vc" crossorigin="anonymous" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" integrity="sha384-P8VzCVnT9NBUkMrpcIZrJbA7EBjJvh/fJS6PmP+4nLIM284DtsImIv8D0fFjIkeh" crossorigin="anonymous" defer></script>
+<script src="js/site.js" defer></script>
 </body>
 </html>
